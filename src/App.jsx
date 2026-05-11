@@ -1,3 +1,4 @@
+// Currently unused — see src/components/ApplicationViews.jsx for the actual root component.
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
