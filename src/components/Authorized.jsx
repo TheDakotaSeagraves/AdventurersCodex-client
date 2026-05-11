@@ -5,7 +5,7 @@ export const Authorized = () => {
   if (localStorage.getItem("adventurerscodex_token")) {
     return <>
       <NavBar />
-      <main className="p-4">
+      <main className="pt-28 px-4 pb-4">
         <Outlet />
       </main>
     </>
