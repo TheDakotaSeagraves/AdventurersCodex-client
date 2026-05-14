@@ -6,3 +6,15 @@ export const getCharacters = () => {
         }
     }).then(res => res.json())
 }
+
+
+export const createCharacter = (payload) => {
+    return fetch("http://localhost:8000/characters", {
+        method: "POST",
+        headers: {
+            Authorization: "Token " + JSON.parse(localStorage.getItem('adventurerscodex_token')).token,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    }).then(res => res.json())
+}
