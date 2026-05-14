@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { getCharacters } from "./services/characterServices"
 import { CharacterCard } from "./CharacterCard"
 
 export const Home = () => {
   const [characters, setCharacters] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const navigate = useNavigate()
 
   useEffect(() => {
     getCharacters().then(data => {
@@ -18,7 +20,7 @@ export const Home = () => {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold">My Characters</h1>
         <button
-          onClick={() => {}}
+          onClick={() => navigate("/characters/new")}
           className="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-md"
         >
           + New Character

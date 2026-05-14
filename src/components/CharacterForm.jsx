@@ -1,0 +1,309 @@
+import { useEffect, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { getRaces } from "./services/raceServices"
+import { getDndClasses } from "./services/dndClassServices"
+import { createCharacter } from "./services/characterServices"
+import { PHB_BACKGROUNDS, ALIGNMENTS } from "../constants/characterForm"
+
+export const CharacterForm = () => {
+  const navigate = useNavigate()
+
+  const [formValues, setFormValues] = useState({
+    name: "",
+    race_id: "",
+    dnd_class_id: "",
+    level: 1,
+    background: "",
+    alignment: "",
+    strength: 10,
+    dexterity: 10,
+    constitution: 10,
+    intelligence: 10,
+    wisdom: 10,
+    charisma: 10,
+    hp_max: 1,
+    hp_current: 1,
+    armor_class: 10
+  })
+
+  const [races, setRaces] = useState(null)
+  const [dndClasses, setDndClasses] = useState(null)
+  const [errors, setErrors] = useState({})
+
+  useEffect(() => {
+    getRaces().then(data => setRaces(data))
+    getDndClasses().then(data => setDndClasses(data))
+  }, [])
+
+  const handleChange = (field, value) => {
+    setFormValues({ ...formValues, [field]: value })
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    createCharacter(formValues).then(response => {
+      if (response.id) {
+        navigate("/")
+      } else {
+        setErrors(response)
+      }
+    })
+  }
+
+  return (
+    <section>
+      <Link to="/" className="text-blue-600 hover:underline">
+        ← Back to Character List
+      </Link>
+
+      <h1 className="text-3xl font-bold mt-4 mb-6">New Character</h1>
+
+      <form onSubmit={handleSubmit}>
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Basic Info</h2>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1" htmlFor="name">Character Name</label>
+            <input
+              id="name"
+              type="text"
+              value={formValues.name}
+              onChange={(e) => handleChange("name", e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+            />
+            {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name[0]}</p>}
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1" htmlFor="race">Race</label>
+            <select
+              id="race"
+              value={formValues.race_id}
+              onChange={(e) => handleChange("race_id", e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+            >
+              {races === null ? (
+                <option value="">Loading races...</option>
+              ) : (
+                <>
+                  <option value="">Select a race</option>
+                  {races.map(race => (
+                    <option key={race.id} value={race.id}>{race.name}</option>
+                  ))}
+                </>
+              )}
+            </select>
+            {errors.race_id && <p className="text-red-600 text-sm mt-1">{errors.race_id[0]}</p>}
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1" htmlFor="dnd_class">Class</label>
+            <select
+              id="dnd_class"
+              value={formValues.dnd_class_id}
+              onChange={(e) => handleChange("dnd_class_id", e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+            >
+              {dndClasses === null ? (
+                <option value="">Loading classes...</option>
+              ) : (
+                <>
+                  <option value="">Select a class</option>
+                  {dndClasses.map(dndClass => (
+                    <option key={dndClass.id} value={dndClass.id}>{dndClass.name}</option>
+                  ))}
+                </>
+              )}
+            </select>
+            {errors.dnd_class_id && <p className="text-red-600 text-sm mt-1">{errors.dnd_class_id[0]}</p>}
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1" htmlFor="level">Level</label>
+            <input
+              id="level"
+              type="number"
+              min="1"
+              max="20"
+              value={formValues.level}
+              onChange={(e) => handleChange("level", e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+            />
+            {errors.level && <p className="text-red-600 text-sm mt-1">{errors.level[0]}</p>}
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1" htmlFor="background">Background</label>
+            <input
+              id="background"
+              type="text"
+              list="background-options"
+              value={formValues.background}
+              onChange={(e) => handleChange("background", e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+            />
+            <datalist id="background-options">
+              {PHB_BACKGROUNDS.map(bg => (
+                <option key={bg} value={bg} />
+              ))}
+            </datalist>
+            {errors.background && <p className="text-red-600 text-sm mt-1">{errors.background[0]}</p>}
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1" htmlFor="alignment">Alignment</label>
+            <input
+              id="alignment"
+              type="text"
+              list="alignment-options"
+              value={formValues.alignment}
+              onChange={(e) => handleChange("alignment", e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+            />
+            <datalist id="alignment-options">
+              {ALIGNMENTS.map(al => (
+                <option key={al} value={al} />
+              ))}
+            </datalist>
+            {errors.alignment && <p className="text-red-600 text-sm mt-1">{errors.alignment[0]}</p>}
+          </div>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Ability Scores</h2>
+
+          <div className="grid grid-cols-6 gap-2">
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="strength">STR</label>
+              <input
+                id="strength"
+                type="number"
+                min="3"
+                max="20"
+                value={formValues.strength}
+                onChange={(e) => handleChange("strength", e.target.value)}
+                className="w-full border border-gray-300 rounded-md px-3 py-2"
+              />
+              {errors.strength && <p className="text-red-600 text-xs mt-1">{errors.strength[0]}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="dexterity">DEX</label>
+              <input
+                id="dexterity"
+                type="number"
+                min="3"
+                max="20"
+                value={formValues.dexterity}
+                onChange={(e) => handleChange("dexterity", e.target.value)}
+                className="w-full border border-gray-300 rounded-md px-3 py-2"
+              />
+              {errors.dexterity && <p className="text-red-600 text-xs mt-1">{errors.dexterity[0]}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="constitution">CON</label>
+              <input
+                id="constitution"
+                type="number"
+                min="3"
+                max="20"
+                value={formValues.constitution}
+                onChange={(e) => handleChange("constitution", e.target.value)}
+                className="w-full border border-gray-300 rounded-md px-3 py-2"
+              />
+              {errors.constitution && <p className="text-red-600 text-xs mt-1">{errors.constitution[0]}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="intelligence">INT</label>
+              <input
+                id="intelligence"
+                type="number"
+                min="3"
+                max="20"
+                value={formValues.intelligence}
+                onChange={(e) => handleChange("intelligence", e.target.value)}
+                className="w-full border border-gray-300 rounded-md px-3 py-2"
+              />
+              {errors.intelligence && <p className="text-red-600 text-xs mt-1">{errors.intelligence[0]}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="wisdom">WIS</label>
+              <input
+                id="wisdom"
+                type="number"
+                min="3"
+                max="20"
+                value={formValues.wisdom}
+                onChange={(e) => handleChange("wisdom", e.target.value)}
+                className="w-full border border-gray-300 rounded-md px-3 py-2"
+              />
+              {errors.wisdom && <p className="text-red-600 text-xs mt-1">{errors.wisdom[0]}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="charisma">CHA</label>
+              <input
+                id="charisma"
+                type="number"
+                min="3"
+                max="20"
+                value={formValues.charisma}
+                onChange={(e) => handleChange("charisma", e.target.value)}
+                className="w-full border border-gray-300 rounded-md px-3 py-2"
+              />
+              {errors.charisma && <p className="text-red-600 text-xs mt-1">{errors.charisma[0]}</p>}
+            </div>
+          </div>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Vitals</h2>
+
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="hp_max">HP Max</label>
+              <input
+                id="hp_max"
+                type="number"
+                min="1"
+                value={formValues.hp_max}
+                onChange={(e) => handleChange("hp_max", e.target.value)}
+                className="w-full border border-gray-300 rounded-md px-3 py-2"
+              />
+              {errors.hp_max && <p className="text-red-600 text-sm mt-1">{errors.hp_max[0]}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="hp_current">HP Current</label>
+              <input
+                id="hp_current"
+                type="number"
+                min="0"
+                value={formValues.hp_current}
+                onChange={(e) => handleChange("hp_current", e.target.value)}
+                className="w-full border border-gray-300 rounded-md px-3 py-2"
+              />
+              {errors.hp_current && <p className="text-red-600 text-sm mt-1">{errors.hp_current[0]}</p>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1" htmlFor="armor_class">Armor Class</label>
+              <input
+                id="armor_class"
+                type="number"
+                min="0"
+                value={formValues.armor_class}
+                onChange={(e) => handleChange("armor_class", e.target.value)}
+                className="w-full border border-gray-300 rounded-md px-3 py-2"
+              />
+              {errors.armor_class && <p className="text-red-600 text-sm mt-1">{errors.armor_class[0]}</p>}
+            </div>
+          </div>
+        </section>
+
+        <button
+          type="submit"
+          className="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2 rounded-md"
+        >
+          Create Character
+        </button>
+      </form>
+    </section>
+  )
+}
