@@ -228,7 +228,42 @@ export const CharacterForm = () => {
 
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-4">Vitals</h2>
-        {/* Fields added in commit 4 */}
+
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium mb-1" htmlFor="hp_max">HP Max</label>
+            <input
+              id="hp_max"
+              type="number"
+              min="1"
+              value={formValues.hp_max}
+              onChange={(e) => handleChange("hp_max", e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1" htmlFor="hp_current">HP Current</label>
+            <input
+              id="hp_current"
+              type="number"
+              min="0"
+              value={formValues.hp_current}
+              onChange={(e) => handleChange("hp_current", e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1" htmlFor="armor_class">Armor Class</label>
+            <input
+              id="armor_class"
+              type="number"
+              min="0"
+              value={formValues.armor_class}
+              onChange={(e) => handleChange("armor_class", e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+            />
+          </div>
+        </div>
       </section>
     </section>
   )
