@@ -27,3 +27,14 @@ export const getCharacter = (id) => {
         }
     }).then(res => res.json())
 }
+
+export const updateCharacter = (id, payload) => {
+    return fetch("http://localhost:8000/characters/" + id, {
+        method: "PUT",
+        headers: {
+            Authorization: "Token " + JSON.parse(localStorage.getItem('adventurerscodex_token')).token,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    }).then(res => res.json())
+}
