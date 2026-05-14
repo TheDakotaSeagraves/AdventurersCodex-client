@@ -149,7 +149,81 @@ export const CharacterForm = () => {
 
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-4">Ability Scores</h2>
-        {/* Fields added in commit 3 */}
+
+        <div className="grid grid-cols-6 gap-2">
+          <div>
+            <label className="block text-sm font-medium mb-1" htmlFor="strength">STR</label>
+            <input
+              id="strength"
+              type="number"
+              min="3"
+              max="20"
+              value={formValues.strength}
+              onChange={(e) => handleChange("strength", e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1" htmlFor="dexterity">DEX</label>
+            <input
+              id="dexterity"
+              type="number"
+              min="3"
+              max="20"
+              value={formValues.dexterity}
+              onChange={(e) => handleChange("dexterity", e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1" htmlFor="constitution">CON</label>
+            <input
+              id="constitution"
+              type="number"
+              min="3"
+              max="20"
+              value={formValues.constitution}
+              onChange={(e) => handleChange("constitution", e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1" htmlFor="intelligence">INT</label>
+            <input
+              id="intelligence"
+              type="number"
+              min="3"
+              max="20"
+              value={formValues.intelligence}
+              onChange={(e) => handleChange("intelligence", e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1" htmlFor="wisdom">WIS</label>
+            <input
+              id="wisdom"
+              type="number"
+              min="3"
+              max="20"
+              value={formValues.wisdom}
+              onChange={(e) => handleChange("wisdom", e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1" htmlFor="charisma">CHA</label>
+            <input
+              id="charisma"
+              type="number"
+              min="3"
+              max="20"
+              value={formValues.charisma}
+              onChange={(e) => handleChange("charisma", e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+            />
+          </div>
+        </div>
       </section>
 
       <section className="mb-8">
