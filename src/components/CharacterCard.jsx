@@ -1,5 +1,8 @@
+import { useNavigate } from "react-router-dom"
+
 export const CharacterCard = ({ character }) => {
-    return (
+    const navigate =useNavigate()
+        return (
         <article className="flex items-center justify-between border border-gray-300 rounded-md bg-white p-4 mb-3">
             <div>
                 <h2 className="text-lg font-semibold text-gray-900">{character.name}</h2>
@@ -12,7 +15,7 @@ export const CharacterCard = ({ character }) => {
                 </p>
             </div>
             <button
-                onClick={() => {}}
+                onClick={() => navigate(`/characters/${character.id}`)}
                 className="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-md"
             >
                 View →

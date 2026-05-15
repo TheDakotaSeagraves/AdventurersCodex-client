@@ -4,6 +4,8 @@ import { Login } from "./auth/Login.jsx"
 import { Register } from './auth/Register.jsx'
 import { Home } from "./Home.jsx"
 import { CharacterForm } from "./CharacterForm.jsx"
+import { CharacterSheet } from "./CharacterSheet.jsx"
+import { CharacterEditForm } from "./CharacterEditForm.jsx"
 
 const ApplicationViews = () => {
 
@@ -14,6 +16,8 @@ const ApplicationViews = () => {
             <Route element={<Authorized />}>
                 <Route path="/" element={<Home />} />
                 <Route path="/characters/new" element={<CharacterForm />} />
+                <Route path="/characters/:id" element={<CharacterSheet />} />
+                <Route path="/characters/:id/edit" element={<CharacterEditForm />} />
             </Route>
         </Routes>
     </BrowserRouter>
