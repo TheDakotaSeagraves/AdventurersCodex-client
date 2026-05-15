@@ -38,3 +38,12 @@ export const updateCharacter = (id, payload) => {
         body: JSON.stringify(payload)
     }).then(res => res.json())
 }
+
+export const deleteCharacter = (id) => {
+    return fetch("http://localhost:8000/characters/" + id, {
+        method: "DELETE",
+        headers: {
+            Authorization: "Token " + JSON.parse(localStorage.getItem('adventurerscodex_token')).token
+        }
+    }).then(res => res.ok)
+}
