@@ -16,6 +16,7 @@ const ApplicationViews = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/characters/new" element={<CharacterForm />} />
                 <Route path="/characters/:id" element={<CharacterSheet />} />
+                <Route path="/characters/:id" element={<CharacterSheet />} />
             </Route>
         </Routes>
     </BrowserRouter>

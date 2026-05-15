@@ -1,15 +1,26 @@
 import { useEffect, useState } from "react"
-import { Link, useParams } from "react-router-dom"
-import { getCharacter } from "./services/characterServices"
+import { Link, useNavigate, useParams } from "react-router-dom"
+import { getCharacter, deleteCharacter } from "./services/characterServices"
 import { getAbilityModifier } from "../utils/dnd"
 
 export const CharacterSheet = () => {
   const { id } = useParams()
+  const navigate = useNavigate()
+
   const [character, setCharacter] = useState(null)
+  const [confirmingDelete, setConfirmingDelete] = useState(false)
 
   useEffect(() => {
     getCharacter(id).then(data => setCharacter(data))
   }, [id])
+
+  const handleDelete = () => {
+    deleteCharacter(id).then(ok => {
+      if (ok) {
+        navigate("/")
+      }
+    })
+  }
 
   if (character === null) {
     return (
@@ -25,10 +36,49 @@ export const CharacterSheet = () => {
         ← Back to Character List
       </Link>
 
-      <h1 className="text-3xl font-bold mt-4 mb-1">{character.name}</h1>
-      <p className="text-gray-600 mb-6">
-        {character.race.name} · {character.dnd_class.name} · Level {character.level}
-      </p>
+      <div className="flex items-start justify-between mt-4 mb-6">
+        <div>
+          <h1 className="text-3xl font-bold mb-1">{character.name}</h1>
+          <p className="text-gray-600">
+            {character.race.name} · {character.dnd_class.name} · Level {character.level}
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {confirmingDelete ? (
+            <>
+              <span className="text-sm text-gray-700">Are you sure?</span>
+              <button
+                onClick={handleDelete}
+                className="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-md"
+              >
+                Yes
+              </button>
+              <button
+                onClick={() => setConfirmingDelete(false)}
+                className="bg-gray-200 hover:bg-gray-300 text-gray-900 font-medium px-4 py-2 rounded-md"
+              >
+                Cancel
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => navigate(`/characters/${id}/edit`)}
+                className="bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-md"
+              >
+                Edit Character
+              </button>
+              <button
+                onClick={() => setConfirmingDelete(true)}
+                className="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-md"
+              >
+                Delete
+              </button>
+            </>
+          )}
+        </div>
+      </div>
 
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-4">Vitals</h2>
@@ -80,6 +130,15 @@ export const CharacterSheet = () => {
           </div>
         </div>
       </section>
+
+      {character.backstory && (
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Backstory</h2>
+          <div className="border border-gray-300 rounded-md px-4 py-3 whitespace-pre-wrap">
+            {character.backstory}
+          </div>
+        </section>
+      )}
     </section>
   )
 }
