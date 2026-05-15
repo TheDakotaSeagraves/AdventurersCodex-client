@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { getCharacter } from "./services/characterServices"
+import { getAbilityModifier } from "../utils/dnd"
 
 export const CharacterSheet = () => {
   const { id } = useParams()
@@ -47,6 +48,36 @@ export const CharacterSheet = () => {
         <h2 className="text-xl font-semibold mb-4">Classes</h2>
         <div className="border border-gray-300 rounded-md px-4 py-3">
           {character.dnd_class.name} — Level {character.level}
+        </div>
+      </section>
+
+      <section className="mb-8">
+        <h2 className="text-xl font-semibold mb-4">Ability Scores</h2>
+        <div className="grid grid-cols-6 gap-2">
+          <div className="border border-gray-300 rounded-md px-3 py-3 text-center">
+            <p className="text-sm text-gray-600">STR</p>
+            <p className="text-lg font-medium">{character.strength} ({getAbilityModifier(character.strength)})</p>
+          </div>
+          <div className="border border-gray-300 rounded-md px-3 py-3 text-center">
+            <p className="text-sm text-gray-600">DEX</p>
+            <p className="text-lg font-medium">{character.dexterity} ({getAbilityModifier(character.dexterity)})</p>
+          </div>
+          <div className="border border-gray-300 rounded-md px-3 py-3 text-center">
+            <p className="text-sm text-gray-600">CON</p>
+            <p className="text-lg font-medium">{character.constitution} ({getAbilityModifier(character.constitution)})</p>
+          </div>
+          <div className="border border-gray-300 rounded-md px-3 py-3 text-center">
+            <p className="text-sm text-gray-600">INT</p>
+            <p className="text-lg font-medium">{character.intelligence} ({getAbilityModifier(character.intelligence)})</p>
+          </div>
+          <div className="border border-gray-300 rounded-md px-3 py-3 text-center">
+            <p className="text-sm text-gray-600">WIS</p>
+            <p className="text-lg font-medium">{character.wisdom} ({getAbilityModifier(character.wisdom)})</p>
+          </div>
+          <div className="border border-gray-300 rounded-md px-3 py-3 text-center">
+            <p className="text-sm text-gray-600">CHA</p>
+            <p className="text-lg font-medium">{character.charisma} ({getAbilityModifier(character.charisma)})</p>
+          </div>
         </div>
       </section>
     </section>
