@@ -37,7 +37,8 @@ export const CharacterEditForm = () => {
         charisma: data.charisma,
         hp_max: data.hp_max,
         hp_current: data.hp_current,
-        armor_class: data.armor_class
+        armor_class: data.armor_class,
+        backstory: data.backstory
       })
     })
   }, [id])
@@ -400,6 +401,22 @@ export const CharacterEditForm = () => {
               />
               {errors.armor_class && <p className="text-red-600 text-sm mt-1">{errors.armor_class[0]}</p>}
             </div>
+          </div>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Backstory</h2>
+
+          <div>
+            <label className="block text-sm font-medium mb-1" htmlFor="backstory">Backstory (optional)</label>
+            <textarea
+              id="backstory"
+              rows="6"
+              value={formValues.backstory}
+              onChange={(e) => handleChange("backstory", e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+            />
+            {errors.backstory && <p className="text-red-600 text-sm mt-1">{errors.backstory[0]}</p>}
           </div>
         </section>
 
