@@ -4,6 +4,7 @@ import { getRaces } from "./services/raceServices"
 import { getDndClasses } from "./services/dndClassServices"
 import { createCharacter } from "./services/characterServices"
 import { PHB_BACKGROUNDS, ALIGNMENTS } from "../constants/characterForm"
+import { DND_SUBCLASSES } from "../constants/dndSubclasses"
 
 export const CharacterForm = () => {
   const navigate = useNavigate()
@@ -42,9 +43,14 @@ export const CharacterForm = () => {
   }
 
   const handleClassLevelChange = (index, field, value) => {
-    const updated = formValues.class_levels.map((entry, i) =>
-      i === index ? { ...entry, [field]: value } : entry
-    )
+    const updated = formValues.class_levels.map((entry, i) => {
+      if (i !== index) return entry
+      const updatedEntry = { ...entry, [field]: value }
+      if (field === "dnd_class_id") {
+        updatedEntry.subclass = ""
+      }
+      return updatedEntry
+    })
     setFormValues({ ...formValues, class_levels: updated })
   }
 
@@ -63,6 +69,13 @@ export const CharacterForm = () => {
       ...formValues,
       class_levels: formValues.class_levels.filter((_, i) => i !== index)
     })
+  }
+
+  const getSubclassOptions = (dndClassId) => {
+    if (!dndClassId || !dndClasses) return []
+    const selectedClass = dndClasses.find(c => c.id === parseInt(dndClassId))
+    if (!selectedClass) return []
+    return DND_SUBCLASSES[selectedClass.name] || []
   }
 
   const handleSubmit = (event) => {
@@ -162,54 +175,76 @@ export const CharacterForm = () => {
         <section className="mb-8">
           <h2 className="text-xl font-semibold mb-4">Classes</h2>
 
-          {formValues.class_levels.map((entry, index) => (
-            <div key={index} className="border border-gray-200 rounded-md p-4 mb-3 relative">
-              {formValues.class_levels.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => handleRemoveClass(index)}
-                  className="absolute top-2 right-2 text-gray-400 hover:text-red-600 text-lg font-bold"
-                  aria-label="Remove class"
-                >
-                  ×
-                </button>
-              )}
+          {formValues.class_levels.map((entry, index) => {
+            const subclassOptions = getSubclassOptions(entry.dnd_class_id)
 
-              <div className="mb-3">
-                <label className="block text-sm font-medium mb-1" htmlFor={`class-${index}`}>Class</label>
-                <select
-                  id={`class-${index}`}
-                  value={entry.dnd_class_id}
-                  onChange={(e) => handleClassLevelChange(index, "dnd_class_id", e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                >
-                  {dndClasses === null ? (
-                    <option value="">Loading classes...</option>
-                  ) : (
-                    <>
-                      <option value="">Select a class</option>
-                      {dndClasses.map(dndClass => (
-                        <option key={dndClass.id} value={dndClass.id}>{dndClass.name}</option>
-                      ))}
-                    </>
-                  )}
-                </select>
-              </div>
+            return (
+              <div key={index} className="border border-gray-200 rounded-md p-4 mb-3 relative">
+                {formValues.class_levels.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveClass(index)}
+                    className="absolute top-2 right-2 text-gray-400 hover:text-red-600 text-lg font-bold"
+                    aria-label="Remove class"
+                  >
+                    ×
+                  </button>
+                )}
 
-              <div className="mb-3">
-                <label className="block text-sm font-medium mb-1" htmlFor={`level-${index}`}>Level</label>
-                <input
-                  id={`level-${index}`}
-                  type="number"
-                  min="1"
-                  max="20"
-                  value={entry.level}
-                  onChange={(e) => handleClassLevelChange(index, "level", e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                />
+                <div className="mb-3">
+                  <label className="block text-sm font-medium mb-1" htmlFor={`class-${index}`}>Class</label>
+                  <select
+                    id={`class-${index}`}
+                    value={entry.dnd_class_id}
+                    onChange={(e) => handleClassLevelChange(index, "dnd_class_id", e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2"
+                  >
+                    {dndClasses === null ? (
+                      <option value="">Loading classes...</option>
+                    ) : (
+                      <>
+                        <option value="">Select a class</option>
+                        {dndClasses.map(dndClass => (
+                          <option key={dndClass.id} value={dndClass.id}>{dndClass.name}</option>
+                        ))}
+                      </>
+                    )}
+                  </select>
+                </div>
+
+                <div className="mb-3">
+                  <label className="block text-sm font-medium mb-1" htmlFor={`level-${index}`}>Level</label>
+                  <input
+                    id={`level-${index}`}
+                    type="number"
+                    min="1"
+                    max="20"
+                    value={entry.level}
+                    onChange={(e) => handleClassLevelChange(index, "level", e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2"
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="block text-sm font-medium mb-1" htmlFor={`subclass-${index}`}>Subclass</label>
+                  <select
+                    id={`subclass-${index}`}
+                    value={entry.subclass}
+                    onChange={(e) => handleClassLevelChange(index, "subclass", e.target.value)}
+                    disabled={!entry.dnd_class_id}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 disabled:bg-gray-100 disabled:text-gray-400"
+                  >
+                    <option value="">
+                      {!entry.dnd_class_id ? "Select a class first" : "None"}
+                    </option>
+                    {subclassOptions.map(subclass => (
+                      <option key={subclass} value={subclass}>{subclass}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
 
           <button
             type="button"
