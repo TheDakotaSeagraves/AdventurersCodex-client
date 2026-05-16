@@ -4,6 +4,7 @@ import { getRaces } from "./services/raceServices"
 import { getDndClasses } from "./services/dndClassServices"
 import { createCharacter } from "./services/characterServices"
 import { PHB_BACKGROUNDS, ALIGNMENTS } from "../constants/characterForm"
+import { DND_SUBCLASSES } from "../constants/dndSubclasses"
 
 export const CharacterForm = () => {
   const navigate = useNavigate()
@@ -11,8 +12,9 @@ export const CharacterForm = () => {
   const [formValues, setFormValues] = useState({
     name: "",
     race_id: "",
-    dnd_class_id: "",
-    level: 1,
+    class_levels: [
+      { dnd_class_id: "", level: 1, subclass: "" }
+    ],
     background: "",
     alignment: "",
     strength: 10,
@@ -23,7 +25,8 @@ export const CharacterForm = () => {
     charisma: 10,
     hp_max: 1,
     hp_current: 1,
-    armor_class: 10
+    armor_class: 10,
+    backstory: ""
   })
 
   const [races, setRaces] = useState(null)
@@ -37,6 +40,42 @@ export const CharacterForm = () => {
 
   const handleChange = (field, value) => {
     setFormValues({ ...formValues, [field]: value })
+  }
+
+  const handleClassLevelChange = (index, field, value) => {
+    const updated = formValues.class_levels.map((entry, i) => {
+      if (i !== index) return entry
+      const updatedEntry = { ...entry, [field]: value }
+      if (field === "dnd_class_id") {
+        updatedEntry.subclass = ""
+      }
+      return updatedEntry
+    })
+    setFormValues({ ...formValues, class_levels: updated })
+  }
+
+  const handleAddClass = () => {
+    setFormValues({
+      ...formValues,
+      class_levels: [
+        ...formValues.class_levels,
+        { dnd_class_id: "", level: 1, subclass: "" }
+      ]
+    })
+  }
+
+  const handleRemoveClass = (index) => {
+    setFormValues({
+      ...formValues,
+      class_levels: formValues.class_levels.filter((_, i) => i !== index)
+    })
+  }
+
+  const getSubclassOptions = (dndClassId) => {
+    if (!dndClassId || !dndClasses) return []
+    const selectedClass = dndClasses.find(c => c.id === parseInt(dndClassId))
+    if (!selectedClass) return []
+    return DND_SUBCLASSES[selectedClass.name] || []
   }
 
   const handleSubmit = (event) => {
@@ -97,42 +136,6 @@ export const CharacterForm = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-1" htmlFor="dnd_class">Class</label>
-            <select
-              id="dnd_class"
-              value={formValues.dnd_class_id}
-              onChange={(e) => handleChange("dnd_class_id", e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
-            >
-              {dndClasses === null ? (
-                <option value="">Loading classes...</option>
-              ) : (
-                <>
-                  <option value="">Select a class</option>
-                  {dndClasses.map(dndClass => (
-                    <option key={dndClass.id} value={dndClass.id}>{dndClass.name}</option>
-                  ))}
-                </>
-              )}
-            </select>
-            {errors.dnd_class_id && <p className="text-red-600 text-sm mt-1">{errors.dnd_class_id[0]}</p>}
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-1" htmlFor="level">Level</label>
-            <input
-              id="level"
-              type="number"
-              min="1"
-              max="20"
-              value={formValues.level}
-              onChange={(e) => handleChange("level", e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
-            />
-            {errors.level && <p className="text-red-600 text-sm mt-1">{errors.level[0]}</p>}
-          </div>
-
-          <div className="mb-4">
             <label className="block text-sm font-medium mb-1" htmlFor="background">Background</label>
             <input
               id="background"
@@ -167,6 +170,97 @@ export const CharacterForm = () => {
             </datalist>
             {errors.alignment && <p className="text-red-600 text-sm mt-1">{errors.alignment[0]}</p>}
           </div>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Classes</h2>
+
+          {formValues.class_levels.map((entry, index) => {
+            const subclassOptions = getSubclassOptions(entry.dnd_class_id)
+
+            return (
+              <div key={index} className="border border-gray-200 rounded-md p-4 mb-3 relative">
+                {formValues.class_levels.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveClass(index)}
+                    className="absolute top-2 right-2 text-gray-400 hover:text-red-600 text-lg font-bold"
+                    aria-label="Remove class"
+                  >
+                    ×
+                  </button>
+                )}
+
+                <div className="mb-3">
+                  <label className="block text-sm font-medium mb-1" htmlFor={`class-${index}`}>Class</label>
+                  <select
+                    id={`class-${index}`}
+                    value={entry.dnd_class_id}
+                    onChange={(e) => handleClassLevelChange(index, "dnd_class_id", e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2"
+                  >
+                    {dndClasses === null ? (
+                      <option value="">Loading classes...</option>
+                    ) : (
+                      <>
+                        <option value="">Select a class</option>
+                        {dndClasses.map(dndClass => (
+                          <option key={dndClass.id} value={dndClass.id}>{dndClass.name}</option>
+                        ))}
+                      </>
+                    )}
+                  </select>
+                </div>
+
+                <div className="mb-3">
+                  <label className="block text-sm font-medium mb-1" htmlFor={`level-${index}`}>Level</label>
+                  <input
+                    id={`level-${index}`}
+                    type="number"
+                    min="1"
+                    max="20"
+                    value={entry.level}
+                    onChange={(e) => handleClassLevelChange(index, "level", e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2"
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="block text-sm font-medium mb-1" htmlFor={`subclass-${index}`}>Subclass</label>
+                  <select
+                    id={`subclass-${index}`}
+                    value={entry.subclass}
+                    onChange={(e) => handleClassLevelChange(index, "subclass", e.target.value)}
+                    disabled={!entry.dnd_class_id}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 disabled:bg-gray-100 disabled:text-gray-400"
+                  >
+                    <option value="">
+                      {!entry.dnd_class_id ? "Select a class first" : "None"}
+                    </option>
+                    {subclassOptions.map(subclass => (
+                      <option key={subclass} value={subclass}>{subclass}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )
+          })}
+
+          <button
+            type="button"
+            onClick={handleAddClass}
+            className="bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-md"
+          >
+            + Add Class
+          </button>
+
+          {errors.class_levels && (
+            <p className="text-red-600 text-sm mt-2">
+              {Array.isArray(errors.class_levels) && typeof errors.class_levels[0] === "string"
+                ? errors.class_levels[0]
+                : "Please correct the errors in the class entries."}
+            </p>
+          )}
         </section>
 
         <section className="mb-8">
@@ -294,6 +388,22 @@ export const CharacterForm = () => {
               />
               {errors.armor_class && <p className="text-red-600 text-sm mt-1">{errors.armor_class[0]}</p>}
             </div>
+          </div>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Backstory</h2>
+
+          <div>
+            <label className="block text-sm font-medium mb-1" htmlFor="backstory">Backstory (optional)</label>
+            <textarea
+              id="backstory"
+              rows="6"
+              value={formValues.backstory}
+              onChange={(e) => handleChange("backstory", e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+            />
+            {errors.backstory && <p className="text-red-600 text-sm mt-1">{errors.backstory[0]}</p>}
           </div>
         </section>
 

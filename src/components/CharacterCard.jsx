@@ -1,15 +1,19 @@
 import { useNavigate } from "react-router-dom"
 
 export const CharacterCard = ({ character }) => {
-    const navigate =useNavigate()
-        return (
+    const navigate = useNavigate()
+
+    const classSummary = character.class_levels
+        .map(entry => `${entry.dnd_class.name} ${entry.level}`)
+        .join(" / ")
+
+    return (
         <article className="flex items-center justify-between border border-gray-300 rounded-md bg-white p-4 mb-3">
             <div>
                 <h2 className="text-lg font-semibold text-gray-900">{character.name}</h2>
                 <p className="text-sm text-gray-700">
-                    {character.race.name} · {character.dnd_class.name}
+                    {character.race.name} · {classSummary}
                 </p>
-                <p className="text-sm text-gray-600">Level {character.level}</p>
                 <p className="text-sm text-gray-600">
                     HP {character.hp_current}/{character.hp_max} · AC {character.armor_class}
                 </p>
