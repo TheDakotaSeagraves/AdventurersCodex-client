@@ -11,8 +11,9 @@ export const CharacterForm = () => {
   const [formValues, setFormValues] = useState({
     name: "",
     race_id: "",
-    dnd_class_id: "",
-    level: 1,
+    class_levels: [
+      { dnd_class_id: "", level: 1, subclass: "" }
+    ],
     background: "",
     alignment: "",
     strength: 10,
@@ -23,7 +24,8 @@ export const CharacterForm = () => {
     charisma: 10,
     hp_max: 1,
     hp_current: 1,
-    armor_class: 10
+    armor_class: 10,
+    backstory: ""
   })
 
   const [races, setRaces] = useState(null)
@@ -37,6 +39,13 @@ export const CharacterForm = () => {
 
   const handleChange = (field, value) => {
     setFormValues({ ...formValues, [field]: value })
+  }
+
+  const handleClassLevelChange = (index, field, value) => {
+    const updated = formValues.class_levels.map((entry, i) =>
+      i === index ? { ...entry, [field]: value } : entry
+    )
+    setFormValues({ ...formValues, class_levels: updated })
   }
 
   const handleSubmit = (event) => {
@@ -97,42 +106,6 @@ export const CharacterForm = () => {
           </div>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-1" htmlFor="dnd_class">Class</label>
-            <select
-              id="dnd_class"
-              value={formValues.dnd_class_id}
-              onChange={(e) => handleChange("dnd_class_id", e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
-            >
-              {dndClasses === null ? (
-                <option value="">Loading classes...</option>
-              ) : (
-                <>
-                  <option value="">Select a class</option>
-                  {dndClasses.map(dndClass => (
-                    <option key={dndClass.id} value={dndClass.id}>{dndClass.name}</option>
-                  ))}
-                </>
-              )}
-            </select>
-            {errors.dnd_class_id && <p className="text-red-600 text-sm mt-1">{errors.dnd_class_id[0]}</p>}
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-sm font-medium mb-1" htmlFor="level">Level</label>
-            <input
-              id="level"
-              type="number"
-              min="1"
-              max="20"
-              value={formValues.level}
-              onChange={(e) => handleChange("level", e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2"
-            />
-            {errors.level && <p className="text-red-600 text-sm mt-1">{errors.level[0]}</p>}
-          </div>
-
-          <div className="mb-4">
             <label className="block text-sm font-medium mb-1" htmlFor="background">Background</label>
             <input
               id="background"
@@ -167,6 +140,56 @@ export const CharacterForm = () => {
             </datalist>
             {errors.alignment && <p className="text-red-600 text-sm mt-1">{errors.alignment[0]}</p>}
           </div>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Classes</h2>
+
+          {formValues.class_levels.map((entry, index) => (
+            <div key={index} className="border border-gray-200 rounded-md p-4 mb-3">
+              <div className="mb-3">
+                <label className="block text-sm font-medium mb-1" htmlFor={`class-${index}`}>Class</label>
+                <select
+                  id={`class-${index}`}
+                  value={entry.dnd_class_id}
+                  onChange={(e) => handleClassLevelChange(index, "dnd_class_id", e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2"
+                >
+                  {dndClasses === null ? (
+                    <option value="">Loading classes...</option>
+                  ) : (
+                    <>
+                      <option value="">Select a class</option>
+                      {dndClasses.map(dndClass => (
+                        <option key={dndClass.id} value={dndClass.id}>{dndClass.name}</option>
+                      ))}
+                    </>
+                  )}
+                </select>
+              </div>
+
+              <div className="mb-3">
+                <label className="block text-sm font-medium mb-1" htmlFor={`level-${index}`}>Level</label>
+                <input
+                  id={`level-${index}`}
+                  type="number"
+                  min="1"
+                  max="20"
+                  value={entry.level}
+                  onChange={(e) => handleClassLevelChange(index, "level", e.target.value)}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2"
+                />
+              </div>
+            </div>
+          ))}
+
+          {errors.class_levels && (
+            <p className="text-red-600 text-sm mt-1">
+              {Array.isArray(errors.class_levels) && typeof errors.class_levels[0] === "string"
+                ? errors.class_levels[0]
+                : "Please correct the errors in the class entries."}
+            </p>
+          )}
         </section>
 
         <section className="mb-8">
@@ -294,6 +317,22 @@ export const CharacterForm = () => {
               />
               {errors.armor_class && <p className="text-red-600 text-sm mt-1">{errors.armor_class[0]}</p>}
             </div>
+          </div>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">Backstory</h2>
+
+          <div>
+            <label className="block text-sm font-medium mb-1" htmlFor="backstory">Backstory (optional)</label>
+            <textarea
+              id="backstory"
+              rows="6"
+              value={formValues.backstory}
+              onChange={(e) => handleChange("backstory", e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-3 py-2"
+            />
+            {errors.backstory && <p className="text-red-600 text-sm mt-1">{errors.backstory[0]}</p>}
           </div>
         </section>
 
