@@ -48,6 +48,23 @@ export const CharacterForm = () => {
     setFormValues({ ...formValues, class_levels: updated })
   }
 
+  const handleAddClass = () => {
+    setFormValues({
+      ...formValues,
+      class_levels: [
+        ...formValues.class_levels,
+        { dnd_class_id: "", level: 1, subclass: "" }
+      ]
+    })
+  }
+
+  const handleRemoveClass = (index) => {
+    setFormValues({
+      ...formValues,
+      class_levels: formValues.class_levels.filter((_, i) => i !== index)
+    })
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault()
     createCharacter(formValues).then(response => {
@@ -146,7 +163,18 @@ export const CharacterForm = () => {
           <h2 className="text-xl font-semibold mb-4">Classes</h2>
 
           {formValues.class_levels.map((entry, index) => (
-            <div key={index} className="border border-gray-200 rounded-md p-4 mb-3">
+            <div key={index} className="border border-gray-200 rounded-md p-4 mb-3 relative">
+              {formValues.class_levels.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => handleRemoveClass(index)}
+                  className="absolute top-2 right-2 text-gray-400 hover:text-red-600 text-lg font-bold"
+                  aria-label="Remove class"
+                >
+                  ×
+                </button>
+              )}
+
               <div className="mb-3">
                 <label className="block text-sm font-medium mb-1" htmlFor={`class-${index}`}>Class</label>
                 <select
@@ -183,8 +211,16 @@ export const CharacterForm = () => {
             </div>
           ))}
 
+          <button
+            type="button"
+            onClick={handleAddClass}
+            className="bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded-md"
+          >
+            + Add Class
+          </button>
+
           {errors.class_levels && (
-            <p className="text-red-600 text-sm mt-1">
+            <p className="text-red-600 text-sm mt-2">
               {Array.isArray(errors.class_levels) && typeof errors.class_levels[0] === "string"
                 ? errors.class_levels[0]
                 : "Please correct the errors in the class entries."}
