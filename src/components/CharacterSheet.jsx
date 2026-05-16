@@ -30,6 +30,10 @@ export const CharacterSheet = () => {
     )
   }
 
+  const classSummary = character.class_levels
+    .map(entry => `${entry.dnd_class.name} ${entry.level}`)
+    .join(" / ")
+
   return (
     <section>
       <Link to="/" className="text-blue-600 hover:underline">
@@ -40,7 +44,7 @@ export const CharacterSheet = () => {
         <div>
           <h1 className="text-3xl font-bold mb-1">{character.name}</h1>
           <p className="text-gray-600">
-            {character.race.name} · {character.dnd_class.name} · Level {character.level}
+            {character.race.name} · {classSummary}
           </p>
         </div>
 
@@ -97,7 +101,12 @@ export const CharacterSheet = () => {
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-4">Classes</h2>
         <div className="border border-gray-300 rounded-md px-4 py-3">
-          {character.dnd_class.name} — Level {character.level}
+          {character.class_levels.map(entry => (
+            <p key={entry.id} className="py-1">
+              {entry.dnd_class.name} — Level {entry.level}
+              {entry.subclass && ` — ${entry.subclass}`}
+            </p>
+          ))}
         </div>
       </section>
 
