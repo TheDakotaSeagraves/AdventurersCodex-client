@@ -15,9 +15,8 @@ export const Register = () => {
     const handleRegister = (e) => {
         e.preventDefault()
         const newUser = {
-            firstName,
-            lastName,
-            displayName,
+            first_name: firstName,
+            last_name: lastName,
             email,
             password,
         }
