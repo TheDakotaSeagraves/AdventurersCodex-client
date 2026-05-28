@@ -28,7 +28,7 @@ export const Register = () => {
             .then(authInfo => {
                 if (authInfo && authInfo.token) {
                     localStorage.setItem("adventurerscodex_token", JSON.stringify(authInfo))
-                    navigate("/")
+                    navigate("/profile")
                 } else {
                     existDialog.current.showModal()
                 }
