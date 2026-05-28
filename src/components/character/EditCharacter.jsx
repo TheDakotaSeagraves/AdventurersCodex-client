@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { getCharacter, updateCharacter } from "../services/characterService"
 import { getRaces } from "../services/raceService"
 import { getClasses } from "../services/classService"
+import { PHB_BACKGROUNDS, ALIGNMENTS } from "../../constants/characterForm"
 
 // Hardcoded 5e subclass options per class (PHB + Xanathar's + Tasha's). Subclass is a free-text
 // field on the API, so this lookup lives client-side and is never validated server-side.
@@ -275,11 +276,23 @@ export const EditCharacter = () => {
                         <div className="grid grid-cols-2 gap-3 mb-3">
                             <fieldset className="flex flex-col gap-1">
                                 <label className="font-display text-xs tracking-wider uppercase">Background</label>
-                                <input className="form-surface" value={form.background} onChange={change("background")} placeholder="Sage, Soldier, Outlander…" />
+                                <select className="form-surface" value={form.background} onChange={change("background")}>
+                                    <option value="">Choose a background…</option>
+                                    {form.background && !PHB_BACKGROUNDS.includes(form.background) && (
+                                        <option value={form.background}>{form.background}</option>
+                                    )}
+                                    {PHB_BACKGROUNDS.map(bg => <option key={bg} value={bg}>{bg}</option>)}
+                                </select>
                             </fieldset>
                             <fieldset className="flex flex-col gap-1">
                                 <label className="font-display text-xs tracking-wider uppercase">Alignment</label>
-                                <input className="form-surface" value={form.alignment} onChange={change("alignment")} placeholder="Chaotic Good, Lawful Neutral…" />
+                                <select className="form-surface" value={form.alignment} onChange={change("alignment")}>
+                                    <option value="">Choose an alignment…</option>
+                                    {form.alignment && !ALIGNMENTS.includes(form.alignment) && (
+                                        <option value={form.alignment}>{form.alignment}</option>
+                                    )}
+                                    {ALIGNMENTS.map(al => <option key={al} value={al}>{al}</option>)}
+                                </select>
                             </fieldset>
                         </div>
                         <fieldset className="flex flex-col gap-1">
