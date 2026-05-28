@@ -1,3 +1,4 @@
+// Route guard — renders child routes if the user is logged in, otherwise redirects to /login
 import { Navigate, Outlet } from "react-router-dom"
 import { NavBar } from "./nav/Navbar.jsx"
 

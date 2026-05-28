@@ -11,9 +11,9 @@ export const NavBar = () => {
     }
 
     return (
-        <nav className="navbar">
+        <nav className="navbar parchment">
             <NavLink to={isLoggedIn ? "/profile" : "/login"} className="navbar__brand">
-                Adventurer's Codex
+                ⚔ The Adventurer's Codex
             </NavLink>
 
             <ul className="navbar__links">

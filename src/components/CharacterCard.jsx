@@ -1,8 +1,10 @@
+// Displays a single character as a summary card with a link to its full sheet
 import { useNavigate } from "react-router-dom"
 
 export const CharacterCard = ({ character }) => {
     const navigate = useNavigate()
 
+    // Builds a readable class summary string e.g. "Fighter 5 / Rogue 2"
     const classSummary = character.class_levels
         .map(entry => `${entry.dnd_class.name} ${entry.level}`)
         .join(" / ")
